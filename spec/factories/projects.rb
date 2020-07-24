@@ -10,6 +10,13 @@ FactoryBot.define do
 
     association :owner
 
+    # メモ付きのプロジェクト
+    trait :with_notes do
+
+    	after(:create) { |project| create_list(:note, 5, project: project) }
+
+    end
+
 	  # 締め切りが昨日
 	  trait :due_yesterday do
 
