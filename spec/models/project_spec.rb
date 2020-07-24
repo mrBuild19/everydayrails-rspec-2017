@@ -82,7 +82,7 @@ RSpec.describe Project, type: :model do
     # 締切日が過ぎていれば遅延していること
     it "is late when the due date is past today" do
 
-      project = FactoryBot.create(:project_due_yesterday)
+      project = FactoryBot.create(:project, :due_yesterday)
 
       expect(project).to be_late
 
@@ -93,7 +93,7 @@ RSpec.describe Project, type: :model do
   # 締切日が今日ならスケジュールどおりであること
   it "is on time when the due date is today" do
 
-    project = FactoryBot.create(:project_due_today)
+    project = FactoryBot.create(:project, :due_today)
 
     expect(project).to_not be_late
 
@@ -102,7 +102,7 @@ RSpec.describe Project, type: :model do
   # 締切日が未来ならスケジュールどおりであること
   it "is on time when the due date is future" do
 
-    project = FactoryBot.create(:project_due_tomorrow)
+    project = FactoryBot.create(:project, :due_tomorrow)
 
     expect(project).to_not be_late
 
