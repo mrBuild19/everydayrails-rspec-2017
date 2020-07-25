@@ -60,219 +60,219 @@ RSpec.describe ProjectsController, type: :controller do
 
 		end
 
-		describe "#show" do
+	end
 
-			# 認可されたユーザーとして
-			context "as an authorized user" do
+	describe "#show" do
 
-				before do
+		# 認可されたユーザーとして
+		context "as an authorized user" do
 
-					@user = FactoryBot.create(:user)
+			before do
 
-					@project = FactoryBot.create(:project, owner: @user)
+				@user = FactoryBot.create(:user)
 
-				end
-
-				# 正常にレスポンスを返すこと
-				it "responds successfully" do
-
-					sign_in @user
-
-					get :show, params: { id: @project.id }
-
-					expect(response).to be_success
-
-				end
+				@project = FactoryBot.create(:project, owner: @user)
 
 			end
 
-			# 認可されていないユーザーとして
-			context "as an unauthorized user" do
+			# 正常にレスポンスを返すこと
+			it "responds successfully" do
 
-				before do
+				sign_in @user
 
-					@user = FactoryBot.create(:user)
+				get :show, params: { id: @project.id }
 
-					other_user = FactoryBot.create(:user)
-
-					@project = FactoryBot.create(:project, owner: other_user)
-
-				end
-
-				# ダッシュボードにリダイレクトすること
-				it "redirects to the dashboard" do
-
-					sign_in @user
-
-					get :show, params: { id: @project.id }
-
-					expect(response).to redirect_to root_path
-
-				end
+				expect(response).to be_success
 
 			end
 
 		end
 
-		describe "#create" do
+		# 認可されていないユーザーとして
+		context "as an unauthorized user" do
 
-			# 認証済みのユーザーとして
-			context "as an authenticated user" do
+			before do
 
-				before do
+				@user = FactoryBot.create(:user)
 
-					@user = FactoryBot.create(:user)
+				other_user = FactoryBot.create(:user)
 
-				end
-
-				# プロジェクトを追加できること
-				it "adds a project" do
-
-					project_params = FactoryBot.attributes_for(:project)
-
-					sign_in @user
-
-					expect {
-
-						post :create, params: { project: project_params }
-
-					}.to change(@user.projects, :count).by(1)
-
-				end
+				@project = FactoryBot.create(:project, owner: other_user)
 
 			end
 
-			# ゲストとして
-			context "as a guest" do
+			# ダッシュボードにリダイレクトすること
+			it "redirects to the dashboard" do
 
-				# 302レスポンスを返すこと
-				it "returns a 302 response" do
+				sign_in @user
 
-					project_params = FactoryBot.attributes_for(:project)
+				get :show, params: { id: @project.id }
 
-					post :create, params: { project: project_params }
-
-					expect(response).to have_http_status "302"
-
-				end
-
-				# サインイン画面にリダイレクトすること
-				it "redirects to the sign-in page" do
-
-					project_params = FactoryBot.attributes_for(:project)
-
-					post :create, params: { project: project_params }
-
-					expect(response).to redirect_to "/users/sign_in"
-
-				end
+				expect(response).to redirect_to root_path
 
 			end
 
 		end
 
-		describe "#update" do
+	end
 
-			# 認可されたユーザーとして
-			context "as an authorized user" do
+	describe "#create" do
 
-				before do
+		# 認証済みのユーザーとして
+		context "as an authenticated user" do
 
-					@user = FactoryBot.create(:user)
+			before do
 
-					@project = FactoryBot.create(:project, owner: @user)
-
-				end
-
-				# プロジェクトを更新できること
-				it "updates a project" do
-
-					project_params = FactoryBot.attributes_for(:project, name: "New Project Name")
-
-					sign_in @user
-
-					patch :update, params: { id: @project.id, project: project_params }
-
-					expect(@project.reload.name).to eq "New Project Name"
-
-				end
+				@user = FactoryBot.create(:user)
 
 			end
 
-			# 認可されていないユーザーとして
-			context "as an unauthorized user" do
+			# プロジェクトを追加できること
+			it "adds a project" do
 
-				before do
+				project_params = FactoryBot.attributes_for(:project)
 
-					@user = FactoryBot.create(:user)
+				sign_in @user
 
-					other_user = FactoryBot.create(:user)
+				expect {
 
-					@project = FactoryBot.create(:project,
-							owner: other_user,
-							name: "Same Old Name")
+					post :create, params: { project: project_params }
 
-				end
-
-				# プロジェクトを更新できないこと
-				it "does not update the project" do
-
-					project_params = FactoryBot.attributes_for(:project, name: "New Name")
-
-					sign_in @user
-
-					patch :update, params: { id: @project.id, project: project_params }
-
-					expect(@project.reload.name).to eq "Same Old Name"
-
-				end
-
-
-				# ダッシュボードへリダイレクトすること
-				it "redirects to the dashboard" do
-
-					project_params = FactoryBot.attributes_for(:project)
-
-					sign_in @user
-
-					patch :update, params: { id: @project.id, project: project_params }
-
-					expect(response).to redirect_to root_path
-
-				end
+				}.to change(@user.projects, :count).by(1)
 
 			end
 
-			# ゲストとして
-			context "as a guest" do
+		end
 
-				before do
+		# ゲストとして
+		context "as a guest" do
 
-					@project = FactoryBot.create(:project)
+			# 302レスポンスを返すこと
+			it "returns a 302 response" do
 
-				end
+				project_params = FactoryBot.attributes_for(:project)
 
-				#302レスポンスを返すこと
-				it "returns a 302 response" do
+				post :create, params: { project: project_params }
 
-					project_params = FactoryBot.attributes_for(:project)
+				expect(response).to have_http_status "302"
 
-					patch :update, params: { id: @project.id, project: project_params }
+			end
 
-					expect(response).to have_http_status "302"
+			# サインイン画面にリダイレクトすること
+			it "redirects to the sign-in page" do
 
-				end
+				project_params = FactoryBot.attributes_for(:project)
 
-				# サインイン画面にリダイレクトすること
-				it "redirects to the sign-in page" do
+				post :create, params: { project: project_params }
 
-					project_params = FactoryBot.attributes_for(:project)
+				expect(response).to redirect_to "/users/sign_in"
 
-					patch :update, params: { id: @project.id, project: project_params }
+			end
 
-					expect(response).to redirect_to "/users/sign_in"
+		end
 
-				end
+	end
+
+	describe "#update" do
+
+		# 認可されたユーザーとして
+		context "as an authorized user" do
+
+			before do
+
+				@user = FactoryBot.create(:user)
+
+				@project = FactoryBot.create(:project, owner: @user)
+
+			end
+
+			# プロジェクトを更新できること
+			it "updates a project" do
+
+				project_params = FactoryBot.attributes_for(:project, name: "New Project Name")
+
+				sign_in @user
+
+				patch :update, params: { id: @project.id, project: project_params }
+
+				expect(@project.reload.name).to eq "New Project Name"
+
+			end
+
+		end
+
+		# 認可されていないユーザーとして
+		context "as an unauthorized user" do
+
+			before do
+
+				@user = FactoryBot.create(:user)
+
+				other_user = FactoryBot.create(:user)
+
+				@project = FactoryBot.create(:project,
+						owner: other_user,
+						name: "Same Old Name")
+
+			end
+
+			# プロジェクトを更新できないこと
+			it "does not update the project" do
+
+				project_params = FactoryBot.attributes_for(:project, name: "New Name")
+
+				sign_in @user
+
+				patch :update, params: { id: @project.id, project: project_params }
+
+				expect(@project.reload.name).to eq "Same Old Name"
+
+			end
+
+
+			# ダッシュボードへリダイレクトすること
+			it "redirects to the dashboard" do
+
+				project_params = FactoryBot.attributes_for(:project)
+
+				sign_in @user
+
+				patch :update, params: { id: @project.id, project: project_params }
+
+				expect(response).to redirect_to root_path
+
+			end
+
+		end
+
+		# ゲストとして
+		context "as a guest" do
+
+			before do
+
+				@project = FactoryBot.create(:project)
+
+			end
+
+			#302レスポンスを返すこと
+			it "returns a 302 response" do
+
+				project_params = FactoryBot.attributes_for(:project)
+
+				patch :update, params: { id: @project.id, project: project_params }
+
+				expect(response).to have_http_status "302"
+
+			end
+
+			# サインイン画面にリダイレクトすること
+			it "redirects to the sign-in page" do
+
+				project_params = FactoryBot.attributes_for(:project)
+
+				patch :update, params: { id: @project.id, project: project_params }
+
+				expect(response).to redirect_to "/users/sign_in"
 
 			end
 
