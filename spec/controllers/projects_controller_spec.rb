@@ -116,6 +116,42 @@ RSpec.describe ProjectsController, type: :controller do
 
 	end
 
+	describe "#new" do
+
+		before do
+
+			@user = FactoryBot.create(:user)
+
+		end
+
+		# 正常にレスポンスを返すこと
+		it "responds successfully" do
+
+			project_params = FactoryBot.attributes_for(:project)
+
+			sign_in @user
+
+			get :new, params: { project: project_params }
+
+			expect(response).to be_success
+
+		end
+
+		# 200レスポンスを返すこと
+		it "returns a 200 response" do
+
+			project_params = FactoryBot.attributes_for(:project)
+
+			sign_in @user
+
+			get :new, params: { project: project_params }
+
+			expect(response).to have_http_status "200"
+
+		end
+
+	end
+
 	describe "#create" do
 
 		# 認証済みのユーザーとして
