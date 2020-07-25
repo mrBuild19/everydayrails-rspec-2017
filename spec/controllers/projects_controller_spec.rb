@@ -127,18 +127,43 @@ RSpec.describe ProjectsController, type: :controller do
 
 			end
 
-			# プロジェクトを追加できること
-			it "adds a project" do
+			# 有効な属性値の場合
+			context "with valid attributes" do
 
-				project_params = FactoryBot.attributes_for(:project)
+				# プロジェクトを追加できること
+				it "adds a project" do
 
-				sign_in @user
+					project_params = FactoryBot.attributes_for(:project)
 
-				expect {
+					sign_in @user
 
-					post :create, params: { project: project_params }
+					expect {
 
-				}.to change(@user.projects, :count).by(1)
+						post :create, params: { project: project_params }
+
+					}.to change(@user.projects, :count).by(1)
+
+				end
+
+			end
+
+			# 無効な属性値の場合
+			context "with invalid attributes" do
+
+				# プロジェクトを追加できないこと
+				it "does not add a project" do
+
+					project_params = FactoryBot.attributes_for(:project, :invalid)
+
+					sign_in @user
+
+					expect {
+
+						post :create, params: { project: project_params }
+
+					}.to_not change(@user.projects, :count)
+
+				end
 
 			end
 

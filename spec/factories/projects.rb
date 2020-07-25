@@ -38,6 +38,13 @@ FactoryBot.define do
 
 	  end
 
+	  # 無効になっている
+	  trait :invalid do
+
+	  	name nil
+
+	  end
+
 	end
 
 end
