@@ -199,6 +199,83 @@ RSpec.describe ProjectsController, type: :controller do
 
 			end
 
+			# 認可されていないユーザーとして
+			context "as an unauthorized user" do
+
+				before do
+
+					@user = FactoryBot.create(:user)
+
+					other_user = FactoryBot.create(:user)
+
+					@project = FactoryBot.create(:project,
+							owner: other_user,
+							name: "Same Old Name")
+
+				end
+
+				# プロジェクトを更新できないこと
+				it "does not update the project" do
+
+					project_params = FactoryBot.attributes_for(:project, name: "New Name")
+
+					sign_in @user
+
+					patch :update, params: { id: @project.id, project: project_params }
+
+					expect(@project.reload.name).to eq "Same Old Name"
+
+				end
+
+
+				# ダッシュボードへリダイレクトすること
+				it "redirects to the dashboard" do
+
+					project_params = FactoryBot.attributes_for(:project)
+
+					sign_in @user
+
+					patch :update, params: { id: @project.id, project: project_params }
+
+					expect(response).to redirect_to root_path
+
+				end
+
+			end
+
+			# ゲストとして
+			context "as a guest" do
+
+				before do
+
+					@project = FactoryBot.create(:project)
+
+				end
+
+				#302レスポンスを返すこと
+				it "returns a 302 response" do
+
+					project_params = FactoryBot.attributes_for(:project)
+
+					patch :update, params: { id: @project.id, project: project_params }
+
+					expect(response).to have_http_status "302"
+
+				end
+
+				# サインイン画面にリダイレクトすること
+				it "redirects to the sign-in page" do
+
+					project_params = FactoryBot.attributes_for(:project)
+
+					patch :update, params: { id: @project.id, project: project_params }
+
+					expect(response).to redirect_to "/users/sign_in"
+
+				end
+
+			end
+
 		end
 
 	end
