@@ -20,6 +20,7 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'factory_bot_rails', '~> 4.10.0'
   gem 'capybara', '~> 2.15.2'
+  gem 'launchy', '~> 2.4.3'
 end
 
 group :development do
