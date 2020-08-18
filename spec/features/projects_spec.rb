@@ -21,9 +21,9 @@ RSpec.feature "Projects", type: :feature do
 
 			click_link "New Project"
 
-			fill_in "Name", with: "Test Project"
+			fill_in "project_name", with: "Test Project"
 
-			fill_in "Description", with: "Trying out Capybara"
+			fill_in "project_description", with: "Trying out Capybara"
 
 			click_button "Create Project"
 
